@@ -1,0 +1,7 @@
+{
+  "name": "internet-mapping",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "micahstubbs <micah.stubbs@gmail.com>",
+  "license": "MIT"
+}
