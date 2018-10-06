@@ -8,6 +8,8 @@ Project developed during the [CAIDA BGP hackathon 2016](https://www.caida.org/wo
 
 this iteration updates the code to ES2017+ with the help of our friend [lebab](https://lebab.io/)
 
+an iteration on the [Internet Interactive Map](https://bl.ocks.org/vasturiano/1553f231d27ea26e4606bc353eb7f846) from [@vastur](https://twitter.com/vastur) 
+
 ---
 
 this iteration makes the code nice to work with, for my subjective definition of nice to work with :-)
