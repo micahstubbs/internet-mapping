@@ -20,8 +20,8 @@ define(
       },
 
       componentDidMount() {
-        const props = this.props;
-        const consts = this.const;
+        const props = this.props
+        const consts = this.const
 
         const cs = (this._csGraph = cytoscape({
           container: ReactDOM.findDOMNode(this),
@@ -92,7 +92,7 @@ define(
           })
           .on('select', 'node', function() {
             props.onNodeClick(this.data())
-          }));
+          }))
 
         cs.panzoom({
           zoomFactor: 0.1, // zoom factor per zoom tick
@@ -105,7 +105,7 @@ define(
         })
 
         function zoomOrPan() {
-          const pan = cs.pan();
+          const pan = cs.pan()
           props.onZoomOrPan(cs.zoom(), pan.x, pan.y)
         }
 
@@ -139,9 +139,9 @@ define(
       },
 
       resetStyle() {
-        const cs = this._csGraph;
-        const zoom = cs.zoom();
-        const nodeSize = this.const.NODE_SIZE / zoom;
+        const cs = this._csGraph
+        const zoom = cs.zoom()
+        const nodeSize = this.const.NODE_SIZE / zoom
         cs
           .style()
           .selector('node')
@@ -161,7 +161,7 @@ define(
           })
           .update()
       }
-    });
+    })
 
     return React.createClass({
       getDefaultProps() {
@@ -212,17 +212,18 @@ define(
       },
 
       _genRadialNodes() {
-        const rThis = this;
+        const rThis = this
         const maxR =
-          Math.min(this.props.width, this.props.height) / 2 - this.props.margin;
+          Math.min(this.props.width, this.props.height) / 2 - this.props.margin
 
         const maxConeSize = Math.max.apply(
           null,
           this.props.graphData.ases.map(asNode => asNode.customerConeSize)
-        );
+        )
 
         return this.props.graphData.ases.map(node => {
-          const radius = rThis._getRadius(node.customerConeSize, maxConeSize);
+          const radius = rThis._getRadius(node.customerConeSize, maxConeSize)
+          console.log('radius from _genRadialNodes', radius)
           return {
             // Convert to radial coords
             id: node.asn,
@@ -234,14 +235,14 @@ define(
       },
 
       _getEdges() {
-        const customerCones = {};
+        const customerCones = {}
         const maxConeSize = Math.max.apply(
           null,
           this.props.graphData.ases.map(asNode => {
             customerCones[asNode.asn] = asNode.customerConeSize
             return asNode.customerConeSize
           })
-        );
+        )
 
         return this.props.graphData.relationships.map(rel => {
           if (!rel.hasOwnProperty('customerConeSize')) {
@@ -270,16 +271,16 @@ define(
       },
 
       _onZoomOrPan(zoom, panX, panY) {
-        const r = Math.min(this.props.width, this.props.height) / 2;
-        const offsetX = -(panX - this.props.width / 2) / zoom / r;
-        const offsetY = -(panY - this.props.height / 2) / zoom / r;
-        const offsetR = Math.sqrt(Math.pow(offsetX, 2) + Math.pow(offsetY, 2));
+        const r = Math.min(this.props.width, this.props.height) / 2
+        const offsetX = -(panX - this.props.width / 2) / zoom / r
+        const offsetY = -(panY - this.props.height / 2) / zoom / r
+        const offsetR = Math.sqrt(Math.pow(offsetX, 2) + Math.pow(offsetY, 2))
 
         let offsetAng = offsetR
           ? -Math.acos(offsetX / offsetR) / Math.PI * 180
-          : 0;
+          : 0
 
-        const zoomRadius = 1 / zoom;
+        const zoomRadius = 1 / zoom
 
         if (offsetY < 0) {
           // Complementary angle
@@ -295,8 +296,8 @@ define(
 ////
 
 function graphRandomGenerator(nNodes, nEdges) {
-  const nodes = [];
-  const edges = [];
+  const nodes = []
+  const edges = []
 
   nNodes = Math.max(nNodes, 1)
   nEdges = Math.abs(nEdges)

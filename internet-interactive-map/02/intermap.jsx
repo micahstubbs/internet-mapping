@@ -127,6 +127,9 @@ define(
       },
 
       render() {
+        const baseOuterMargin = 70
+        const pointDiameter = 4
+        const outerMargin = baseOuterMargin + pointDiameter
         return (
           <div style={{ position: 'relative' }}>
             <div style={{ position: 'absolute' }}>
@@ -134,7 +137,7 @@ define(
                 graphData={this.props.data}
                 width={this.state.width}
                 height={this.state.height}
-                margin={this.state.layoutMargin}
+                margin={this.state.layoutMargin + outerMargin}
                 selectedAs={this.state.srcHighlight}
                 onRadialViewportChange={this._onRadialViewportChange}
                 onAsHover={this._onAsHover}
