@@ -1,4 +1,4 @@
-define([], function() {
+define([], () => {
   function valueOpacity(value, value_max) {
     if (value == null) {
       value = 1
@@ -12,30 +12,37 @@ define([], function() {
     } else if (value <= 0.000001) {
       value = 0.000001
     }
-    var temp = Math.log(value) / Math.log(value_max)
+    const temp = Math.log(value) / Math.log(value_max);
     //var hue = (360*(4+5+temp/8))%360;
-    var hue = temp * 0.7 + 0.5 //value;
-    var sat = 1
-    var bri = 1
+    const hue = temp * 0.7 + 0.5; //value;
+    const sat = 1;
+    const bri = 1;
     //    return "hsl("+hue+",100%,100%)";
     //    bri = .80*temp+.20;
     //var color = "hsl("+hue+","+(100*sat)+"%,"+(100*bri)+"%)";
-    var rgb = hsvRgb(hue, sat, bri)
-    for (var i = 0; i < 3; i++) {
+    const rgb = hsvRgb(hue, sat, bri);
+    for (let i = 0; i < 3; i++) {
       rgb[i] = rgb[i].toString(16)
       while (rgb[i].length < 2) {
-        rgb[i] = '0' + rgb[i]
+        rgb[i] = `0${rgb[i]}`
       }
     }
-    var color = '#' + rgb[0] + rgb[1] + rgb[2]
+    const color = `#${rgb[0]}${rgb[1]}${rgb[2]}`;
     return color
   }
 
   function hsvRgb(hue, sat, bri) {
-    var h = hue,
-      s = sat,
-      v = bri
-    var r, g, b, i, f, p, q, t
+    let h = hue;
+    let s = sat;
+    let v = bri;
+    let r;
+    let g;
+    let b;
+    let i;
+    let f;
+    let p;
+    let q;
+    let t;
     if (arguments.length === 1) {
       ;(s = h.s), (v = h.v), (h = h.h)
     }
@@ -64,12 +71,12 @@ define([], function() {
         ;(r = v), (g = p), (b = q)
         break
     }
-    var rgb = [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)]
+    const rgb = [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
     return rgb
   }
 
   return {
-    valueRgb: valueRgb,
-    valueOpacity: valueOpacity
+    valueRgb,
+    valueOpacity
   }
 })

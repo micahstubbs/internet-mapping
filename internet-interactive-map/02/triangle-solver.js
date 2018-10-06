@@ -1,23 +1,24 @@
-define([], function() {
+define([], () => {
   // Given some sides and angles, this returns a tuple of 8 number/string values.
   // angle A is opposite to side a, etc
   // angles in degrees (0-360)
   function solveTriangle(a, b, c, A, B, C) {
-    var sides = (a != null) + (b != null) + (c != null) // Boolean to integer conversion
-    var angles = (A != null) + (B != null) + (C != null) // Boolean to integer conversion
-    var area, status
+    const sides = (a != null) + (b != null) + (c != null); // Boolean to integer conversion
+    const angles = (A != null) + (B != null) + (C != null); // Boolean to integer conversion
+    let area;
+    let status;
 
     if (sides + angles != 3) throw 'Give exactly 3 pieces of information'
     else if (sides == 0) throw 'Give at least one side length'
     else if (sides == 3) {
       status = 'Side side side (SSS) case'
       if (lessEqual(a + b, c) || lessEqual(b + c, a) || lessEqual(c + a, b))
-        throw status + ' - No solution'
+        throw `${status} - No solution`
       A = solveAngle(b, c, a)
       B = solveAngle(c, a, b)
       C = solveAngle(a, b, c)
       // Heron's formula
-      var s = (a + b + c) / 2
+      const s = (a + b + c) / 2;
       area = Math.sqrt(s * (s - a) * (s - b) * (s - c))
     } else if (angles == 2) {
       status = 'Angle side angle (ASA) case'
@@ -26,10 +27,10 @@ define([], function() {
       if (B == null) B = 180 - C - A
       if (C == null) C = 180 - A - B
       if (lessEqual(A, 0) || lessEqual(B, 0) || lessEqual(C, 0))
-        throw status + ' - No solution'
-      var sinA = Math.sin(degToRad(A))
-      var sinB = Math.sin(degToRad(B))
-      var sinC = Math.sin(degToRad(C))
+        throw `${status} - No solution`
+      const sinA = Math.sin(degToRad(A));
+      const sinB = Math.sin(degToRad(B));
+      const sinC = Math.sin(degToRad(C));
       // Use law of sines to find sides
       var ratio // side / sin(angle)
       if (a != null) {
@@ -58,7 +59,7 @@ define([], function() {
         and(B != null, B >= 180) ||
         and(C != null, C >= 180)
       )
-        throw status + ' - No solution'
+        throw `${status} - No solution`
       if (a == null) a = solveSide(b, c, A)
       if (b == null) b = solveSide(c, a, B)
       if (c == null) c = solveSide(a, b, C)
@@ -70,7 +71,9 @@ define([], function() {
       if (C != null) area = a * b * Math.sin(degToRad(C)) / 2
     } else {
       status = 'Side side angle (SSA) case - '
-      var knownSide, knownAngle, partialSide
+      let knownSide;
+      let knownAngle;
+      let partialSide;
       if (and(a != null, A != null)) {
         knownSide = a
         knownAngle = A
@@ -86,12 +89,14 @@ define([], function() {
       if (and(a != null, A == null)) partialSide = a
       if (and(b != null, B == null)) partialSide = b
       if (and(c != null, C == null)) partialSide = c
-      if (knownAngle >= 180) throw status + 'No solution'
+      if (knownAngle >= 180) throw `${status}No solution`
       var ratio = knownSide / Math.sin(degToRad(knownAngle))
-      var temp = partialSide / ratio // sin(partialAngle)
-      var partialAngle, unknownSide, unknownAngle
+      const temp = partialSide / ratio; // sin(partialAngle)
+      let partialAngle;
+      let unknownSide;
+      let unknownAngle;
       if (temp > 1 || and(knownAngle >= 90, lessEqual(knownSide, partialSide)))
-        throw status + 'No solution'
+        throw `${status}No solution`
       else if (temp == 1 || knownSide >= partialSide) {
         status += 'Unique solution'
         partialAngle = radToDeg(Math.asin(temp))
@@ -100,12 +105,12 @@ define([], function() {
         area = knownSide * partialSide * Math.sin(degToRad(unknownAngle)) / 2
       } else {
         status += 'Two solutions'
-        var partialAngle0 = radToDeg(Math.asin(temp))
-        var partialAngle1 = 180 - partialAngle0
-        var unknownAngle0 = 180 - knownAngle - partialAngle0
-        var unknownAngle1 = 180 - knownAngle - partialAngle1
-        var unknownSide0 = ratio * Math.sin(degToRad(unknownAngle0)) // Law of sines
-        var unknownSide1 = ratio * Math.sin(degToRad(unknownAngle1)) // Law of sines
+        const partialAngle0 = radToDeg(Math.asin(temp));
+        const partialAngle1 = 180 - partialAngle0;
+        const unknownAngle0 = 180 - knownAngle - partialAngle0;
+        const unknownAngle1 = 180 - knownAngle - partialAngle1;
+        const unknownSide0 = ratio * Math.sin(degToRad(unknownAngle0)); // Law of sines
+        const unknownSide1 = ratio * Math.sin(degToRad(unknownAngle1)); // Law of sines
         partialAngle = [partialAngle0, partialAngle1]
         unknownAngle = [unknownAngle0, unknownAngle1]
         unknownSide = [unknownSide0, unknownSide1]
@@ -144,7 +149,7 @@ define([], function() {
 
   // Returns angle C using law of cosines.
   function solveAngle(a, b, c) {
-    var temp = (a * a + b * b - c * c) / (2 * a * b)
+    const temp = (a * a + b * b - c * c) / (2 * a * b);
     if (and(lessEqual(-1, temp), lessEqual(temp, 0.9999999)))
       return radToDeg(Math.acos(temp))
     else if (
