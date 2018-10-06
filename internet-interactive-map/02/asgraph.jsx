@@ -8,10 +8,10 @@ define(
     'cytoscape-panzoom',
     'colors'
   ],
-  function(React, ReactDOM, $, _, cytoscape, panzoom, Colors) {
+  (React, ReactDOM, $, _, cytoscape, panzoom, Colors) => {
     panzoom(cytoscape, $) // Register panzoom
 
-    var CytoscapeGraph = React.createClass({
+    const CytoscapeGraph = React.createClass({
       const: {
         REFRESH_STYLE_PAUSE: 300, // ms
         MIN_EDGE_WIDTH: 0.15,
@@ -19,11 +19,11 @@ define(
         NODE_SIZE: 2
       },
 
-      componentDidMount: function() {
-        var props = this.props,
-          consts = this.const
+      componentDidMount() {
+        const props = this.props;
+        const consts = this.const;
 
-        var cs = (this._csGraph = cytoscape({
+        const cs = (this._csGraph = cytoscape({
           container: ReactDOM.findDOMNode(this),
           layout: {
             name: 'preset',
@@ -54,7 +54,7 @@ define(
               style: {
                 'curve-style': 'haystack', // 'bezier'
                 width: 0.05,
-                opacity: function(el) {
+                opacity(el) {
                   return el.data('opacity')
                 },
                 'line-color': function(el) {
@@ -64,28 +64,25 @@ define(
             }
           ],
           elements: {
-            nodes: props.nodes.map(function(node) {
-              return {
-                data: $.extend({ id: node.id }, node.nodeData),
-                position: {
-                  x: node.x,
-                  y: node.y
-                }
+            nodes: props.nodes.map(node => ({
+              data: $.extend({ id: node.id }, node.nodeData),
+
+              position: {
+                x: node.x,
+                y: node.y
               }
-            }),
-            edges: props.edges.map(function(edge) {
-              return {
-                data: {
-                  source: edge.src,
-                  target: edge.dst,
-                  color: edge.color || 'lightgrey',
-                  opacity: edge.opacity || 1
-                }
+            })),
+            edges: props.edges.map(edge => ({
+              data: {
+                source: edge.src,
+                target: edge.dst,
+                color: edge.color || 'lightgrey',
+                opacity: edge.opacity || 1
               }
-            })
+            }))
           }
         })
-          .on('zoom', function() {
+          .on('zoom', () => {
             adjustElementSizes()
             zoomOrPan()
           })
@@ -95,7 +92,7 @@ define(
           })
           .on('select', 'node', function() {
             props.onNodeClick(this.data())
-          }))
+          }));
 
         cs.panzoom({
           zoomFactor: 0.1, // zoom factor per zoom tick
@@ -108,7 +105,7 @@ define(
         })
 
         function zoomOrPan() {
-          var pan = cs.pan()
+          const pan = cs.pan();
           props.onZoomOrPan(cs.zoom(), pan.x, pan.y)
         }
 
@@ -118,7 +115,7 @@ define(
         )
       },
 
-      render: function() {
+      render() {
         return (
           <div
             style={{
@@ -129,22 +126,22 @@ define(
         )
       },
 
-      zoom: function(ratio) {
+      zoom(ratio) {
         this._csGraph.zoom(ratio)
       },
 
-      pan: function(x, y) {
-        this._csGraph.pan({ x: x, y: y })
+      pan(x, y) {
+        this._csGraph.pan({ x, y })
       },
 
-      getNodeById: function(id) {
+      getNodeById(id) {
         return this._csGraph.getElementById(id)
       },
 
-      resetStyle: function() {
-        var cs = this._csGraph,
-          zoom = cs.zoom(),
-          nodeSize = this.const.NODE_SIZE / zoom
+      resetStyle() {
+        const cs = this._csGraph;
+        const zoom = cs.zoom();
+        const nodeSize = this.const.NODE_SIZE / zoom;
         cs
           .style()
           .selector('node')
@@ -164,10 +161,10 @@ define(
           })
           .update()
       }
-    })
+    });
 
     return React.createClass({
-      getDefaultProps: function() {
+      getDefaultProps() {
         return {
           graphData: graphRandomGenerator(5, 10),
           width: window.innerWidth,
@@ -177,19 +174,19 @@ define(
         }
       },
 
-      getInitialState: function() {
+      getInitialState() {
         return {
           radialNodes: this._genRadialNodes(),
           edges: this._getEdges()
         }
       },
 
-      componentDidMount: function() {
+      componentDidMount() {
         this.refs.radialGraph.zoom(1)
         this.refs.radialGraph.pan(this.props.width / 2, this.props.height / 2)
       },
 
-      componentWillReceiveProps: function(nextProps) {
+      componentWillReceiveProps(nextProps) {
         if (
           nextProps.width !== this.props.width ||
           nextProps.height !== this.props.height ||
@@ -199,7 +196,7 @@ define(
         }
       },
 
-      render: function() {
+      render() {
         return (
           <CytoscapeGraph
             ref="radialGraph"
@@ -214,20 +211,18 @@ define(
         )
       },
 
-      _genRadialNodes: function() {
-        var rThis = this
-        var maxR =
-          Math.min(this.props.width, this.props.height) / 2 - this.props.margin
+      _genRadialNodes() {
+        const rThis = this;
+        const maxR =
+          Math.min(this.props.width, this.props.height) / 2 - this.props.margin;
 
-        var maxConeSize = Math.max.apply(
+        const maxConeSize = Math.max.apply(
           null,
-          this.props.graphData.ases.map(function(asNode) {
-            return asNode.customerConeSize
-          })
-        )
+          this.props.graphData.ases.map(asNode => asNode.customerConeSize)
+        );
 
-        return this.props.graphData.ases.map(function(node) {
-          var radius = rThis._getRadius(node.customerConeSize, maxConeSize)
+        return this.props.graphData.ases.map(node => {
+          const radius = rThis._getRadius(node.customerConeSize, maxConeSize);
           return {
             // Convert to radial coords
             id: node.asn,
@@ -238,17 +233,17 @@ define(
         })
       },
 
-      _getEdges: function() {
-        var customerCones = {}
-        var maxConeSize = Math.max.apply(
+      _getEdges() {
+        const customerCones = {};
+        const maxConeSize = Math.max.apply(
           null,
-          this.props.graphData.ases.map(function(asNode) {
+          this.props.graphData.ases.map(asNode => {
             customerCones[asNode.asn] = asNode.customerConeSize
             return asNode.customerConeSize
           })
-        )
+        );
 
-        return this.props.graphData.relationships.map(function(rel) {
+        return this.props.graphData.relationships.map(rel => {
           if (!rel.hasOwnProperty('customerConeSize')) {
             rel.customerConeSize = Math.min(
               customerCones[rel.src],
@@ -264,7 +259,7 @@ define(
         })
       },
 
-      _getRadius: function(coneSize, maxConeSize) {
+      _getRadius(coneSize, maxConeSize) {
         // 0<=result<=1
         return (
           (Math.log(maxConeSize) - Math.log(coneSize)) /
@@ -274,15 +269,17 @@ define(
         )
       },
 
-      _onZoomOrPan: function(zoom, panX, panY) {
-        var r = Math.min(this.props.width, this.props.height) / 2,
-          offsetX = -(panX - this.props.width / 2) / zoom / r,
-          offsetY = -(panY - this.props.height / 2) / zoom / r,
-          offsetR = Math.sqrt(Math.pow(offsetX, 2) + Math.pow(offsetY, 2)),
-          offsetAng = offsetR
-            ? -Math.acos(offsetX / offsetR) / Math.PI * 180
-            : 0,
-          zoomRadius = 1 / zoom
+      _onZoomOrPan(zoom, panX, panY) {
+        const r = Math.min(this.props.width, this.props.height) / 2;
+        const offsetX = -(panX - this.props.width / 2) / zoom / r;
+        const offsetY = -(panY - this.props.height / 2) / zoom / r;
+        const offsetR = Math.sqrt(Math.pow(offsetX, 2) + Math.pow(offsetY, 2));
+
+        let offsetAng = offsetR
+          ? -Math.acos(offsetX / offsetR) / Math.PI * 180
+          : 0;
+
+        const zoomRadius = 1 / zoom;
 
         if (offsetY < 0) {
           // Complementary angle
@@ -298,8 +295,8 @@ define(
 ////
 
 function graphRandomGenerator(nNodes, nEdges) {
-  var nodes = [],
-    edges = []
+  const nodes = [];
+  const edges = [];
 
   nNodes = Math.max(nNodes, 1)
   nEdges = Math.abs(nEdges)

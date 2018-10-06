@@ -1,12 +1,6 @@
-define(['react', 'react-dom', 'jsx!asgraph', 'jsx!polar-layout'], function(
-  React,
-  ReactDOM,
-  AsGraph,
-  PolarLayout,
-  _
-) {
-  var Controls = React.createClass({
-    render: function() {
+define(['react', 'react-dom', 'jsx!asgraph', 'jsx!polar-layout'], (React, ReactDOM, AsGraph, PolarLayout, _) => {
+  const Controls = React.createClass({
+    render() {
       return null
       return (
         <div
@@ -26,14 +20,14 @@ define(['react', 'react-dom', 'jsx!asgraph', 'jsx!polar-layout'], function(
       )
     },
 
-    _handleSearchUpdate: function(event) {
+    _handleSearchUpdate(event) {
       this.props.onSearchChange(event.target.value)
     }
-  })
+  });
 
-  var Logger = React.createClass({
-    render: function() {
-      var asInfo = this.props.asInfo
+  const Logger = React.createClass({
+    render() {
+      const asInfo = this.props.asInfo;
       if (!asInfo) {
         return null
       }
@@ -101,10 +95,10 @@ define(['react', 'react-dom', 'jsx!asgraph', 'jsx!polar-layout'], function(
         </div>
       )
     }
-  })
+  });
 
   return React.createClass({
-    getInitialState: function() {
+    getInitialState() {
       return {
         width: null, //window.innerWidth,
         height: null, //window.innerHeight - 20,
@@ -121,16 +115,16 @@ define(['react', 'react-dom', 'jsx!asgraph', 'jsx!polar-layout'], function(
       }
     },
 
-    componentWillMount: function() {
+    componentWillMount() {
       this._setSize()
       window.addEventListener('resize', this._setSize)
     },
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
       window.removeEventListener('resize', this._setSize)
     },
 
-    render: function() {
+    render() {
       return (
         <div style={{ position: 'relative' }}>
           <div style={{ position: 'absolute' }}>
@@ -185,29 +179,29 @@ define(['react', 'react-dom', 'jsx!asgraph', 'jsx!polar-layout'], function(
       )
     },
 
-    _setSize: function() {
+    _setSize() {
       this.setState({
         width: window.innerWidth,
         height: window.innerHeight - 20
       })
     },
 
-    _onAsHover: function(asInfo) {
+    _onAsHover(asInfo) {
       this.setState({ selectedAsInfo: asInfo })
     },
 
-    _onAsClick: function(asInfo) {
+    _onAsClick(asInfo) {
       this.setState({ srcHighlight: asInfo.id })
     },
 
-    _onSrcChange: function(src) {
+    _onSrcChange(src) {
       this.setState({ srcHighlight: src })
     },
 
-    _onRadialViewportChange: function(zoom, offsetR, offsetAngle) {
+    _onRadialViewportChange(zoom, offsetR, offsetAngle) {
       this.setState({
         offsetRadius: offsetR,
-        offsetAngle: offsetAngle,
+        offsetAngle,
         zoomRadius: zoom
       })
     }

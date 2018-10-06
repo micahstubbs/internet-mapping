@@ -1,10 +1,5 @@
-define(['react', 'react-dom', 'triangle-solver', 'locations'], function(
-  React,
-  ReactDOM,
-  solveTriangle,
-  locations
-) {
-  var DirectionMarker = React.createClass({
+define(['react', 'react-dom', 'triangle-solver', 'locations'], (React, ReactDOM, solveTriangle, locations) => {
+  const DirectionMarker = React.createClass({
     propTypes: {
       length: React.PropTypes.number.isRequired,
       padding: React.PropTypes.number,
@@ -12,21 +7,23 @@ define(['react', 'react-dom', 'triangle-solver', 'locations'], function(
       text: React.PropTypes.string
     },
 
-    getDefaultProps: function() {
+    getDefaultProps() {
       return {
         padding: 0,
         text: ''
       }
     },
 
-    render: function() {
-      var txtX =
+    render() {
+      const txtX =
           (this.props.padding + this.props.length / 2) *
-          Math.cos(this.props.angle),
-        txtY =
-          (this.props.padding + this.props.length / 2) *
-          Math.sin(this.props.angle),
-        txtRotate = this.props.angle * 180 / Math.PI
+          Math.cos(this.props.angle);
+
+      const txtY =
+        (this.props.padding + this.props.length / 2) *
+        Math.sin(this.props.angle);
+
+      let txtRotate = this.props.angle * 180 / Math.PI;
 
       while (txtRotate >= 180) {
         txtRotate -= 360
@@ -44,16 +41,16 @@ define(['react', 'react-dom', 'triangle-solver', 'locations'], function(
           fontFamily="Sans-serif"
           fill="lightgrey"
           textAnchor="middle"
-          transform={'rotate(' + txtRotate + ' ' + txtX + ',' + txtY + ')'}
+          transform={`rotate(${txtRotate} ${txtX},${txtY})`}
           style={{ alignmentBaseline: 'central' }}
         >
           {this.props.text}
         </text>
       )
     }
-  })
+  });
 
-  var RadialLabels = React.createClass({
+  const RadialLabels = React.createClass({
     const: {
       TEXT_HEIGHT_RADIUS_RATIO: 0.025
     },
@@ -62,19 +59,21 @@ define(['react', 'react-dom', 'triangle-solver', 'locations'], function(
       layoutRadius: React.PropTypes.number.isRequired
     },
 
-    render: function() {
-      var props = this.props,
-        textHeight =
-          this.const.TEXT_HEIGHT_RADIUS_RATIO * this.props.layoutRadius,
-        textHeightInAngles =
-          Math.atan(textHeight / this.props.layoutRadius) * 180 / Math.PI, // Small-angle approx
-        anglesCarry = [],
-        opacities = []
+    render() {
+      const props = this.props;
 
-      this.props.labels.forEach(function(label) {
-        var closestAngle = anglesCarry.reduce(function(carry, angleCarry) {
-          return Math.min(carry, Math.abs(label.angle - angleCarry))
-        }, Infinity)
+      const textHeight =
+        this.const.TEXT_HEIGHT_RADIUS_RATIO * this.props.layoutRadius;
+
+      const // Small-angle approx
+      textHeightInAngles =
+        Math.atan(textHeight / this.props.layoutRadius) * 180 / Math.PI;
+
+      const anglesCarry = [];
+      const opacities = [];
+
+      this.props.labels.forEach(label => {
+        const closestAngle = anglesCarry.reduce((carry, angleCarry) => Math.min(carry, Math.abs(label.angle - angleCarry)), Infinity);
 
         anglesCarry.push(label.angle)
         opacities.push(
@@ -84,7 +83,7 @@ define(['react', 'react-dom', 'triangle-solver', 'locations'], function(
 
       return (
         <g>
-          {this.props.labels.map(function(label, idx) {
+          {this.props.labels.map((label, idx) => {
             // Normalize angle
             while (label.angle >= 180) {
               label.angle -= 360
@@ -93,10 +92,11 @@ define(['react', 'react-dom', 'triangle-solver', 'locations'], function(
               label.angle += 360
             }
 
-            var txtX =
-                props.layoutRadius * Math.cos(label.angle * Math.PI / 180),
-              txtY = props.layoutRadius * Math.sin(label.angle * Math.PI / 180),
-              txtRotate = label.angle + (Math.abs(label.angle) < 90 ? 0 : 180)
+            const txtX =
+                props.layoutRadius * Math.cos(label.angle * Math.PI / 180);
+
+            const txtY = props.layoutRadius * Math.sin(label.angle * Math.PI / 180);
+            const txtRotate = label.angle + (Math.abs(label.angle) < 90 ? 0 : 180);
 
             return (
               <text
@@ -107,7 +107,7 @@ define(['react', 'react-dom', 'triangle-solver', 'locations'], function(
                 fill="lightgrey"
                 textAnchor={Math.abs(label.angle) < 90 ? 'start' : 'end'}
                 transform={
-                  'rotate(' + txtRotate + ' ' + txtX + ',' + txtY + ')'
+                  `rotate(${txtRotate} ${txtX},${txtY})`
                 }
                 style={{
                   alignmentBaseline: 'central',
@@ -121,17 +121,17 @@ define(['react', 'react-dom', 'triangle-solver', 'locations'], function(
         </g>
       )
     }
-  })
+  });
 
-  var GraticuleGrid = React.createClass({
-    render: function() {
-      var props = this.props
+  const GraticuleGrid = React.createClass({
+    render() {
+      const props = this.props;
       return (
         <g>
-          {Array.apply(null, {
+          {Array(...{
             length: props.nRadialLines
-          }).map(function(_, idx) {
-            var angle = idx * 360 / props.nRadialLines * Math.PI / 180
+          }).map((_, idx) => {
+            const angle = idx * 360 / props.nRadialLines * Math.PI / 180;
             return (
               <line
                 x1={0}
@@ -147,25 +147,21 @@ define(['react', 'react-dom', 'triangle-solver', 'locations'], function(
               />
             )
           })}
-          {Array.apply(null, {
+          {Array(...{
             length: props.nConcentricLines
-          }).map(function(_, idx) {
-            return (
-              <circle
-                r={props.radius * (idx + 1) / (props.nConcentricLines + 1)}
-                stroke="lightgrey"
-                strokeWidth="1"
-                style={{
-                  fillOpacity: 0,
-                  vectorEffect: 'non-scaling-stroke'
-                }}
-              />
-            )
-          })}
+          }).map((_, idx) => <circle
+            r={props.radius * (idx + 1) / (props.nConcentricLines + 1)}
+            stroke="lightgrey"
+            strokeWidth="1"
+            style={{
+              fillOpacity: 0,
+              vectorEffect: 'non-scaling-stroke'
+            }}
+          />)}
         </g>
       )
     }
-  })
+  });
 
   return React.createClass({
     propTypes: {
@@ -175,7 +171,7 @@ define(['react', 'react-dom', 'triangle-solver', 'locations'], function(
       zoomRadius: React.PropTypes.number
     },
 
-    getDefaultProps: function() {
+    getDefaultProps() {
       return {
         zoomCenter: [0, 0], // radial, angle
         zoomRadius: 1,
@@ -183,7 +179,7 @@ define(['react', 'react-dom', 'triangle-solver', 'locations'], function(
       }
     },
 
-    getInitialState: function() {
+    getInitialState() {
       return {
         cardinalPoints: {
           S: 90,
@@ -198,11 +194,11 @@ define(['react', 'react-dom', 'triangle-solver', 'locations'], function(
       }
     },
 
-    render: function() {
-      var rThis = this
+    render() {
+      const rThis = this;
 
-      var radius =
-        Math.min(this.props.width, this.props.height) / 2 - this.props.margin
+      const radius =
+        Math.min(this.props.width, this.props.height) / 2 - this.props.margin;
 
       return (
         <svg
@@ -212,27 +208,16 @@ define(['react', 'react-dom', 'triangle-solver', 'locations'], function(
         >
           <g
             transform={
-              'translate(' +
-              this.props.width / 2 +
-              ',' +
-              this.props.height / 2 +
-              ')'
+              `translate(${this.props.width / 2},${this.props.height / 2})`
             }
           >
             <g
               transform={
-                'scale(' +
-                1 / rThis.props.zoomRadius +
-                ')' +
-                ' translate(' +
-                -radius *
-                  rThis.props.zoomCenter[0] *
-                  Math.cos(-rThis.props.zoomCenter[1] * Math.PI / 180) +
-                ',' +
-                -radius *
-                  rThis.props.zoomCenter[0] *
-                  Math.sin(-rThis.props.zoomCenter[1] * Math.PI / 180) +
-                ')'
+                `scale(${1 / rThis.props.zoomRadius}) translate(${-radius *
+  rThis.props.zoomCenter[0] *
+  Math.cos(-rThis.props.zoomCenter[1] * Math.PI / 180)},${-radius *
+  rThis.props.zoomCenter[0] *
+  Math.sin(-rThis.props.zoomCenter[1] * Math.PI / 180)})`
               }
             >
               <GraticuleGrid
@@ -268,70 +253,59 @@ define(['react', 'react-dom', 'triangle-solver', 'locations'], function(
             />
 
             <g>
-              {this._getLongitudeLabels().map(function(label) {
-                return (
-                  <DirectionMarker
-                    length={rThis.props.margin / 2}
-                    padding={radius}
-                    angle={label.angle}
-                    text={label.text}
-                  />
-                )
-              })}
+              {this._getLongitudeLabels().map(label => <DirectionMarker
+                length={rThis.props.margin / 2}
+                padding={radius}
+                angle={label.angle}
+                text={label.text}
+              />)}
             </g>
             <RadialLabels
               layoutRadius={radius + rThis.props.margin * 0.65}
-              labels={locations.map(function(city) {
-                return {
-                  text: city.text,
-                  angle: rThis._getProjectedAngle(city.angle)
-                }
-              })}
+              labels={locations.map(city => ({
+                text: city.text,
+                angle: rThis._getProjectedAngle(city.angle)
+              }))}
             />
           </g>
         </svg>
       )
     },
 
-    _getLongitudeLabels: function() {
-      var rThis = this,
-        longCoords = [0, 45, 90, 135, 180, -45, -90, -135],
-        labels = []
+    _getLongitudeLabels() {
+      const rThis = this;
+      const longCoords = [0, 45, 90, 135, 180, -45, -90, -135];
+      const labels = [];
 
-      labels.push.apply(
-        labels,
-        longCoords.map(function(longCoord) {
-          return {
-            text: longCoord + '°',
-            angle: rThis._getProjectedAngle(longCoord) * Math.PI / 180
-          }
-        })
-      )
+      labels.push(...longCoords.map(longCoord => ({
+        text: `${longCoord}°`,
+        angle: rThis._getProjectedAngle(longCoord) * Math.PI / 180
+      })))
 
       return labels
     },
 
-    _getProjectedAngle: function(angle) {
+    _getProjectedAngle(angle) {
       if (!this.props.zoomCenter[0]) return -angle // Right in the center, direct projection
 
-      var knownAngle = this.props.zoomCenter[1] - angle
+      let knownAngle = this.props.zoomCenter[1] - angle;
       while (knownAngle > 180) knownAngle -= 360
       while (knownAngle < -180) knownAngle += 360
 
-      var neg = knownAngle < 0
+      const neg = knownAngle < 0;
       knownAngle = Math.abs(knownAngle)
 
       if (knownAngle == 0 || knownAngle == 180) return angle // Zooming in the exact direction of the angle
 
       // known angle A, side B (full radius=1), side C (zoom radius)
-      var res = solveTriangle(
+      const res = solveTriangle(
         null,
         this.props.zoomCenter[0],
         1,
         knownAngle,
         null,
         null
-      )
+      );
       return (180 - res[5]) * (neg ? -1 : 1) - this.props.zoomCenter[1] // Use angle C
     }
   })
