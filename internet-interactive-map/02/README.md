@@ -6,11 +6,14 @@ Project developed during the [CAIDA BGP hackathon 2016](https://www.caida.org/wo
 
 ---
 
+this iteration updates the code to ES2017+ with the help of our friend [lebab](https://lebab.io/)
+
+---
+
 this iteration makes the code nice to work with, for my subjective definition of nice to work with :-)
 
-prettier formatting and 2-space indentation
+[prettier](https://prettier.io) formatting and 2-space indentation
 
---- 
 
-this iteration updates the code to ES2017+ with the help of our friend lebab
+
 
